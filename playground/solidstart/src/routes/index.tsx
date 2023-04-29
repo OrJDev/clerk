@@ -30,7 +30,7 @@ const Home: VoidComponent = () => {
             <div class='text-lg'>Learn more about Create JD App, the libraries it uses, and how to deploy it.</div>
           </A>
         </div>
-        <pre class='text-white text-sm font-mono'>{JSON.stringify(session(), null, 2)}</pre>
+        <pre class='text-white text-sm font-mono'>{session().isLoaded ? 'true' : 'false'}</pre>
       </div>
       <button
         class='bg-white/10 hover:bg-white/20 text-white rounded-xl p-4'

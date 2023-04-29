@@ -1,7 +1,7 @@
+/* eslint-disable simple-import-sort/imports */
 import type { UserResource } from '@clerk/types';
 import type { Accessor } from 'solid-js';
-
-import { useUserContext } from '../contexts/UserContext';
+import { useUserContext } from '../shared';
 
 type UseUserReturn =
   | { isLoaded: false; isSignedIn: undefined; user: undefined }

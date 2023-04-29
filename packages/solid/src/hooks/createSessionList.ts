@@ -1,8 +1,7 @@
 import type { SessionResource, SetActive, SetSession } from '@clerk/types';
 import type { Accessor } from 'solid-js';
 
-import { useClientContext } from '../contexts/ClientContext';
-import { useIsomorphicClerkContext } from '../contexts/IsomorphicClerkContext';
+import { useClerkInstanceContext, useClientContext } from '../shared';
 
 type UseSessionListReturn =
   | { isLoaded: false; sessions: undefined; setSession: undefined; setActive: undefined }
@@ -11,7 +10,7 @@ type UseSessionListReturn =
 type CreateSessionList = () => Accessor<UseSessionListReturn>;
 
 export const createSessionList: CreateSessionList = () => {
-  const isomorphicClerk = useIsomorphicClerkContext();
+  const isomorphicClerk = useClerkInstanceContext();
   const client = useClientContext();
 
   return () => {

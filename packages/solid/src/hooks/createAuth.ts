@@ -2,9 +2,8 @@ import type { ActJWTClaim, GetToken, MembershipRole, SignOut } from '@clerk/type
 import { invalidStateError } from '@clerk/utils';
 import type { Accessor } from 'solid-js';
 
-import { useAuthContext } from '../contexts/AuthContext';
-import { useIsomorphicClerkContext } from '../contexts/IsomorphicClerkContext';
 import type IsomorphicClerk from '../isomorphicClerk';
+import { useAuthContext, useClerkInstanceContext } from '../shared';
 import { createGetToken, createSignOut } from './utils';
 
 type UseAuthReturn =
@@ -61,7 +60,7 @@ type UseAuth = () => Accessor<UseAuthReturn>;
 
 export const createAuth: UseAuth = () => {
   const authCtx = useAuthContext();
-  const isomorphicClerk = useIsomorphicClerkContext() as unknown as IsomorphicClerk;
+  const isomorphicClerk = useClerkInstanceContext() as unknown as IsomorphicClerk;
 
   const getToken: GetToken = createGetToken(isomorphicClerk);
   const signOut: SignOut = createSignOut(isomorphicClerk);

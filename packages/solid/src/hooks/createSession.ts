@@ -1,7 +1,7 @@
 import type { ActiveSessionResource } from '@clerk/types';
 import type { Accessor } from 'solid-js';
 
-import { useSessionContext } from '../contexts/SessionContext';
+import { useSessionContext } from '../shared';
 
 type UseSessionReturn =
   | { isLoaded: false; isSignedIn: undefined; session: undefined }

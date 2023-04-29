@@ -5,7 +5,8 @@
     "start": "solid-start start --port 3000",
     "build": "solid-start build",
     "lint": "eslint --fix \"**/*.{ts,tsx,js,jsx}\"",
-    "yalc:add": "yalc add -- @clerk/shared @clerk/types @clerk/utils @clerk/backend @clerk/clerk-solid @clerk/clerk-sdk-node"
+    "yalc:add": "yalc add -- @clerk/shared @clerk/types @clerk/utils @clerk/backend @clerk/clerk-solid @clerk/clerk-sdk-node",
+    "latest": "npm run yalc:add && npm run dev"
   },
   "type": "module",
   "devDependencies": {

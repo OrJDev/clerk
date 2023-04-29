@@ -28,15 +28,15 @@ export default function Root() {
         />
       </Head>
       <Body>
-        <Suspense>
-          <ClerkProvider publishableKey={import.meta.env['VITE_CLERK_PUBLISHABLE_KEY']}>
+        <ClerkProvider publishableKey={import.meta.env['VITE_CLERK_PUBLISHABLE_KEY']}>
+          <Suspense>
             <ErrorBoundary>
               <Routes>
                 <FileRoutes />
               </Routes>
             </ErrorBoundary>
-          </ClerkProvider>
-        </Suspense>
+          </Suspense>
+        </ClerkProvider>
         <Scripts />
       </Body>
     </Html>

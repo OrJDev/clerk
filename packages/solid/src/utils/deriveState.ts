@@ -3,12 +3,12 @@ import type { MembershipRole } from '@clerk/types';
 
 export const deriveState = (clerkLoaded: boolean, state: Resources, initialState: InitialState | undefined) => {
   if (!clerkLoaded && initialState) {
-    return deriveFromSsrInitialState(initialState);
+    return deriveFromSsrInitialState(clerkLoaded, initialState);
   }
-  return deriveFromClientSideState(state);
+  return deriveFromClientSideState(clerkLoaded, state);
 };
 
-const deriveFromSsrInitialState = (initialState: InitialState) => {
+const deriveFromSsrInitialState = (clerkLoaded: boolean, initialState: InitialState) => {
   const userId = initialState.userId;
   const user = initialState.user as unknown as UserResource;
   const sessionId = initialState.sessionId;
@@ -31,10 +31,11 @@ const deriveFromSsrInitialState = (initialState: InitialState) => {
     actor,
     lastOrganizationInvitation: null,
     lastOrganizationMember: null,
+    clerkLoaded,
   };
 };
 
-const deriveFromClientSideState = (state: Resources) => {
+const deriveFromClientSideState = (clerkLoaded: boolean, state: Resources) => {
   const userId: string | null | undefined = state.user ? state.user.id : state.user;
   const user = state.user;
   const sessionId: string | null | undefined = state.session ? state.session.id : state.session;
@@ -63,5 +64,6 @@ const deriveFromClientSideState = (state: Resources) => {
     actor,
     lastOrganizationInvitation,
     lastOrganizationMember,
+    clerkLoaded,
   };
 };
