@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ClientResource, InitialState, Resources } from '@clerk/types';
 import { isLegacyFrontendApiKey, isPublishableKey } from '@clerk/utils';
 import { type Accessor, type ParentComponent, createEffect, createSignal, on, onCleanup, onMount } from 'solid-js';
@@ -19,23 +20,22 @@ export type ClerkProviderProps = IsomorphicClerkOptions & {
 };
 
 const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
-  const { initialState, ...restIsomorphicClerkOptions } = props;
-  const { frontendApi = '', publishableKey = '', Clerk: userInitialisedClerk } = restIsomorphicClerkOptions;
+  console.log(`#1 got here with ${JSON.stringify(props)}`);
 
-  if (!userInitialisedClerk) {
-    if (!publishableKey && !frontendApi) {
-      console.log(`throwing missing publishable key error with ${publishableKey} and ${frontendApi}`);
+  if (!props.Clerk) {
+    if (!props.publishableKey && !props.frontendApi) {
+      console.log(`throwing missing publishable key error with ${props.publishableKey} and ${props.frontendApi}`);
       errorThrower.throwMissingPublishableKeyError();
-    } else if (publishableKey && !isPublishableKey(publishableKey)) {
-      console.log(`throwing invalid publishable key error with ${publishableKey}`);
-      errorThrower.throwInvalidPublishableKeyError({ key: publishableKey });
-    } else if (!publishableKey && frontendApi && !isLegacyFrontendApiKey(frontendApi)) {
-      console.log(`throwing invalid frontend api error with ${frontendApi}`);
-      errorThrower.throwInvalidFrontendApiError({ key: frontendApi });
+    } else if (props.publishableKey && !isPublishableKey(props.publishableKey)) {
+      console.log(`throwing invalid publishable key error with ${props.publishableKey}`);
+      errorThrower.throwInvalidPublishableKeyError({ key: props.publishableKey });
+    } else if (props.publishableKey && props.frontendApi && !isLegacyFrontendApiKey((props as any).frontendApi)) {
+      console.log(`throwing invalid frontend api error with ${(props as any).frontendApi}`);
+      errorThrower.throwInvalidFrontendApiError({ key: (props as any).frontendApi });
     }
   }
 
-  const thisClerk = createLoadedIsomorphicClerk(restIsomorphicClerkOptions);
+  const thisClerk = createLoadedIsomorphicClerk(props);
 
   const [state, setState] = createSignal<ClerkContextProviderState>({
     client: thisClerk.isomorphicClerk().client as ClientResource,
@@ -59,7 +59,7 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
     ),
   );
 
-  const derivedState = () => deriveState(thisClerk.loaded(), state(), initialState);
+  const derivedState = () => deriveState(thisClerk.loaded(), state(), props.initialState);
 
   createEffect(() =>
     console.log({
@@ -67,7 +67,7 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
     }),
   );
 
-  console.log(`got here with ${JSON.stringify(props)}`);
+  console.log(`#2 got here with ${JSON.stringify(props)}`);
 
   return (
     <SingleClerkContext.Provider
