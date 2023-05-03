@@ -8,7 +8,7 @@ export type {
   WithSessionProp,
 } from './types';
 export { isMagicLinkError, MagicLinkErrorCode } from '@clerk/utils';
-
+export { SingleClerkContext } from './shared';
 /**
  * Vite does not define `global` by default
  * One workaround is to use the `define` config prop

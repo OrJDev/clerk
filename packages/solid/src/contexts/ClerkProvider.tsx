@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ClientResource, InitialState, Resources } from '@clerk/types';
 import { isLegacyFrontendApiKey, isPublishableKey } from '@clerk/utils';
-import { type Accessor, type ParentComponent, createEffect, createSignal, on, onCleanup, onMount } from 'solid-js';
+import { type Accessor, type ParentComponent, createEffect, createSignal, on, onCleanup } from 'solid-js';
 
 import IsomorphicClerk from '../isomorphicClerk';
 import { SingleClerkContext } from '../shared';
@@ -61,47 +61,27 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
 
   const derivedState = () => deriveState(thisClerk.loaded(), state(), props.initialState);
 
-  createEffect(() =>
-    console.log({
-      derivedState: derivedState(),
-    }),
-  );
-
   console.log(`#2 got here with ${JSON.stringify(props)}`);
 
-  return (
-    <SingleClerkContext.Provider
-      value={{
-        // @ts-expect-error its fine
-        clerk: () => thisClerk.isomorphicClerk(),
-        client: () => state().client,
-        session: () => state().session,
-        user: () => state().user,
-        organization: () => ({
-          organization: state().organization,
-          lastOrganizationInvitation: state().lastOrganizationInvitation,
-          lastOrganizationMember: state().lastOrganizationMember,
-        }),
-        auth: () => derivedState(),
-      }}
-    >
-      {props.children}
-    </SingleClerkContext.Provider>
-  );
+  const clerkValue = {
+    clerk: () => thisClerk.isomorphicClerk() as any,
+    client: () => state().client,
+    session: () => state().session,
+    user: () => state().user,
+    organization: () => ({
+      organization: state().organization,
+      lastOrganizationInvitation: state().lastOrganizationInvitation,
+      lastOrganizationMember: state().lastOrganizationMember,
+    }),
+    auth: () => derivedState(),
+  };
+
+  createEffect(() => console.log(clerkValue));
+
+  return <SingleClerkContext.Provider value={clerkValue}>{props.children}</SingleClerkContext.Provider>;
 };
 
 export { ClerkProvider, __internal__setErrorThrowerOptions };
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const unsafeAction = async (action: () => any, name: string) => {
-  console.log(`Running ${name} action`);
-  try {
-    const result = await action();
-    console.log(`Finished ${name} action`, result);
-  } catch (e) {
-    console.error(`Error in ${name}:`, e);
-  }
-};
 
 const createLoadedIsomorphicClerk = (_options: IsomorphicClerkOptions | Accessor<IsomorphicClerkOptions>) => {
   const [loaded, setLoaded] = createSignal(false);
@@ -110,28 +90,23 @@ const createLoadedIsomorphicClerk = (_options: IsomorphicClerkOptions | Accessor
 
   createEffect(
     on(
-      () => options().appearance,
+      () => options()?.appearance,
       () => {
-        void unsafeAction(
-          () => isomorphicClerk().__unstable__updateProps({ appearance: options().appearance }),
-          'appearance',
-        );
+        isomorphicClerk().__unstable__updateProps({ appearance: options()?.appearance });
       },
     ),
   );
 
   createEffect(
     on(
-      () => options().localization,
+      () => options()?.localization,
       () => {
-        void unsafeAction(() => isomorphicClerk().__unstable__updateProps({ options: options() }), 'options');
+        isomorphicClerk().__unstable__updateProps({ options: options() });
       },
     ),
   );
 
-  onMount(() => {
-    void unsafeAction(() => isomorphicClerk().addOnLoaded(() => setLoaded(true)), 'addOnLoaded');
-  });
+  void isomorphicClerk().addOnLoaded(() => setLoaded(true));
 
   return { isomorphicClerk, loaded };
 };

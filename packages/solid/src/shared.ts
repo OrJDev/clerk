@@ -35,6 +35,7 @@ export type ContextOf<T> = Accessor<{ value: T }> | undefined;
 export const createUseHook = <K extends keyof ClerkContext>(name: K): (() => ClerkContext[K]) => {
   return () => {
     const ctx = useContext(SingleClerkContext);
+    console.log('ctx', ctx);
     if (!ctx) {
       throw new Error(`${name} must be used within a ClerkProvider`);
     }
