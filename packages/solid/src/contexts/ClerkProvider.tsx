@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ClientResource, InitialState, Resources } from '@clerk/types';
 import { isLegacyFrontendApiKey, isPublishableKey } from '@clerk/utils';
-import { type Accessor, type ParentComponent, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js';
+import { type Accessor, type ParentComponent, createEffect, createSignal, on, onCleanup } from 'solid-js';
 
 import IsomorphicClerk from '../isomorphicClerk';
 import { SingleClerkContext } from '../shared';
@@ -68,7 +68,12 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
 
   createEffect(() => console.log(`clerkValue`, clerkValue()));
 
-  return <SingleClerkContext.Provider value={clerkValue}>{props.children}</SingleClerkContext.Provider>;
+  return (
+    <SingleClerkContext.Provider
+      value={clerkValue}
+      children={props.children}
+    />
+  );
 };
 
 export { ClerkProvider, __internal__setErrorThrowerOptions };
@@ -76,7 +81,7 @@ export { ClerkProvider, __internal__setErrorThrowerOptions };
 const createLoadedIsomorphicClerk = (_options: IsomorphicClerkOptions | Accessor<IsomorphicClerkOptions>) => {
   const [loaded, setLoaded] = createSignal(false);
   const options = () => (typeof _options === 'function' ? _options() : _options);
-  const isomorphicClerk = createMemo(() => IsomorphicClerk.getOrCreateInstance(options()));
+  const isomorphicClerk = () => IsomorphicClerk.getOrCreateInstance(options());
 
   createEffect(
     on(

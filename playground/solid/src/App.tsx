@@ -9,7 +9,15 @@ const App: Component = () => {
     const cnt = count++ + 1;
     if (session) {
       const s = session();
-      console.log(`sess - #${cnt}`, s.clerk());
+      const newValue: {
+        [K in keyof typeof s]: typeof s[K] extends (...args: any) => any ? ReturnType<typeof s[K]> : typeof s[K];
+      } = s as any;
+      for (const key in s) {
+        if (typeof (s as any)[key] === 'function') {
+          (newValue as any)[key] = (s as any)[key]();
+        }
+      }
+      console.log(`sess - #${cnt}`, newValue);
     } else {
       console.log(`sess - #${cnt}`, 'no session');
     }
