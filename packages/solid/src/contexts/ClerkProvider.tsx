@@ -67,8 +67,6 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
     auth: () => deriveState(thisClerk.loaded(), state(), props.initialState),
   });
 
-  createEffect(() => console.log(`clerkValue`, clerkValue()));
-
   return (
     <StructureContext.Provider value={StructureContextStates.noGuarantees}>
       <SingleClerkContext.Provider value={clerkValue}>{props.children}</SingleClerkContext.Provider>
