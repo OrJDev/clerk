@@ -1,5 +1,5 @@
 import { SingleClerkContext } from '@clerk/clerk-solid';
-import { Component, createEffect, useContext } from 'solid-js';
+import { Component, createEffect, untrack, useContext } from 'solid-js';
 import styles from './App.module.css';
 
 let count = 0;
@@ -14,7 +14,7 @@ const App: Component = () => {
       } = s as any;
       for (const key in s) {
         if (typeof (s as any)[key] === 'function') {
-          (newValue as any)[key] = (s as any)[key]();
+          (newValue as any)[key] = untrack(() => (s as any)[key]());
         }
       }
       console.log(`sess - #${cnt}`, newValue);
