@@ -23,6 +23,6 @@
     "@clerk/shared": "file:.yalc/@clerk/shared",
     "@clerk/types": "file:.yalc/@clerk/types",
     "@clerk/utils": "file:.yalc/@clerk/utils",
-    "solid-js": "^1.6.10"
+    "solid-js": "^1.6.0"
   }
 }
