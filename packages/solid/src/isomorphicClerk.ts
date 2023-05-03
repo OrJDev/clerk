@@ -172,14 +172,16 @@ export default class IsomorphicClerk {
           scriptVariant: this.options.clerkJSVariant,
         });
 
+        console.log('ClerkJS script loaded');
         if (!global.Clerk) {
           throw new Error('Failed to download latest ClerkJS. Contact support@clerk.com.');
         }
-
+        console.log('Loading Clerk...', this.options);
         await global.Clerk.load(this.options);
+        console.log('Clerk loaded');
       }
-
       if (global.Clerk?.loaded || global.Clerk?.isReady()) {
+        console.log('Clerk is ready');
         return this.hydrateClerkJS(global.Clerk);
       }
       return;
@@ -211,6 +213,8 @@ export default class IsomorphicClerk {
     if (!clerkjs) {
       throw new Error('Failed to hydrate latest Clerk JS');
     }
+
+    console.log('Hydrating ClerkJS...');
 
     this.clerkjs = clerkjs;
 
