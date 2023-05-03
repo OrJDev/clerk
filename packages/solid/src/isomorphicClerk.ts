@@ -170,15 +170,18 @@ export default class IsomorphicClerk {
           domain: this.domain,
           scriptUrl: this.options.clerkJSUrl,
           scriptVariant: this.options.clerkJSVariant,
+          headless: true,
         });
 
         console.log('ClerkJS script loaded');
         if (!global.Clerk) {
           throw new Error('Failed to download latest ClerkJS. Contact support@clerk.com.');
         }
-        console.log('Loading Clerk...', this.options);
-        await global.Clerk.load(this.options);
-        console.log('Clerk loaded');
+        if (!global.Clerk.loaded) {
+          console.log('Loading Clerk...', this.options);
+          await global.Clerk.load(this.options);
+          console.log('Clerk loaded');
+        }
       }
       if (global.Clerk?.loaded || global.Clerk?.isReady()) {
         console.log('Clerk is ready');
@@ -250,6 +253,7 @@ export default class IsomorphicClerk {
 
     this.#loaded = true;
     this.emitLoaded();
+    console.log('ClerkJS hydrated');
     return this.clerkjs;
   };
 

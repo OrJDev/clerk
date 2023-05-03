@@ -89,11 +89,12 @@ export interface LoadScriptParams {
   domain?: string;
   scriptUrl?: string;
   scriptVariant?: ScriptVariant;
+  headless?: boolean;
 }
 
 export async function loadScript(params: LoadScriptParams): Promise<HTMLScriptElement | null> {
   return new Promise((resolve, reject) => {
-    const { frontendApi, publishableKey, proxyUrl, domain } = params;
+    const { frontendApi, publishableKey, proxyUrl, domain, headless } = params;
 
     if (global.Clerk) {
       resolve(null);
@@ -127,7 +128,7 @@ export async function loadScript(params: LoadScriptParams): Promise<HTMLScriptEl
     script.addEventListener('load', () => resolve(script));
     script.addEventListener('error', () => reject(FAILED_TO_LOAD_ERROR));
 
-    script.src = getScriptSrc(params);
+    script.src = getScriptSrc({ ...params, scriptVariant: headless ? 'headless' : undefined });
     document.body.appendChild(script);
   });
 }
