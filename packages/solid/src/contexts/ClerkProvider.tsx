@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ClientResource, InitialState, Resources } from '@clerk/types';
 import { isLegacyFrontendApiKey, isPublishableKey } from '@clerk/utils';
-import { type Accessor, type ParentComponent, createEffect, createSignal, on, onCleanup } from 'solid-js';
+import { type Accessor, type ParentComponent, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js';
 
 import IsomorphicClerk from '../isomorphicClerk';
 import { SingleClerkContext } from '../shared';
@@ -20,17 +20,12 @@ export type ClerkProviderProps = IsomorphicClerkOptions & {
 };
 
 const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
-  console.log(`#1 got here with ${JSON.stringify(props)}`);
-
   if (!props.Clerk) {
     if (!props.publishableKey && !props.frontendApi) {
-      console.log(`throwing missing publishable key error with ${props.publishableKey} and ${props.frontendApi}`);
       errorThrower.throwMissingPublishableKeyError();
     } else if (props.publishableKey && !isPublishableKey(props.publishableKey)) {
-      console.log(`throwing invalid publishable key error with ${props.publishableKey}`);
       errorThrower.throwInvalidPublishableKeyError({ key: props.publishableKey });
     } else if (props.publishableKey && props.frontendApi && !isLegacyFrontendApiKey((props as any).frontendApi)) {
-      console.log(`throwing invalid frontend api error with ${(props as any).frontendApi}`);
       errorThrower.throwInvalidFrontendApiError({ key: (props as any).frontendApi });
     }
   }
@@ -51,7 +46,6 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
       () => thisClerk.isomorphicClerk(),
       () => {
         const unsub = thisClerk.isomorphicClerk().addListener(e => setState({ ...e }));
-        console.log(`got here with ${JSON.stringify(thisClerk.isomorphicClerk())}`);
         if (typeof unsub === 'function') {
           onCleanup(unsub);
         }
@@ -59,11 +53,7 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
     ),
   );
 
-  const derivedState = () => deriveState(thisClerk.loaded(), state(), props.initialState);
-
-  console.log(`#2 got here with ${JSON.stringify(props)}`);
-
-  const clerkValue = {
+  const clerkValue = () => ({
     clerk: () => thisClerk.isomorphicClerk() as any,
     client: () => state().client,
     session: () => state().session,
@@ -73,10 +63,10 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
       lastOrganizationInvitation: state().lastOrganizationInvitation,
       lastOrganizationMember: state().lastOrganizationMember,
     }),
-    auth: () => derivedState(),
-  };
+    auth: () => deriveState(thisClerk.loaded(), state(), props.initialState),
+  });
 
-  createEffect(() => console.log(clerkValue));
+  createEffect(() => console.log(`clerkValue`, clerkValue()));
 
   return <SingleClerkContext.Provider value={clerkValue}>{props.children}</SingleClerkContext.Provider>;
 };
@@ -86,7 +76,7 @@ export { ClerkProvider, __internal__setErrorThrowerOptions };
 const createLoadedIsomorphicClerk = (_options: IsomorphicClerkOptions | Accessor<IsomorphicClerkOptions>) => {
   const [loaded, setLoaded] = createSignal(false);
   const options = () => (typeof _options === 'function' ? _options() : _options);
-  const isomorphicClerk = () => IsomorphicClerk.getOrCreateInstance(options());
+  const isomorphicClerk = createMemo(() => IsomorphicClerk.getOrCreateInstance(options()));
 
   createEffect(
     on(

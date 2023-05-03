@@ -1,14 +1,10 @@
 /* @refresh reload */
 import { render } from 'solid-js/web';
-
 import './index.css';
 import App from './App';
 import { ClerkProvider } from '@clerk/clerk-solid';
+
 const root = document.getElementById('root');
-
-const pkKey = import.meta.env['VITE_CLERK_PUBLISHABLE_KEY'] as string;
-
-console.log({ pkKey });
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   throw new Error(
@@ -18,7 +14,7 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 render(
   () => (
-    <ClerkProvider publishableKey={pkKey}>
+    <ClerkProvider publishableKey={import.meta.env['VITE_CLERK_PUBLISHABLE_KEY']}>
       <App />,
     </ClerkProvider>
   ),

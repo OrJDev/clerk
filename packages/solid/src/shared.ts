@@ -29,7 +29,8 @@ interface ClerkContext {
     orgSlug: string | null | undefined;
   }>;
 }
-export const SingleClerkContext = createContext<ClerkContext>();
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+export const SingleClerkContext = createContext<Accessor<ClerkContext>>(null!);
 export type ContextOf<T> = Accessor<{ value: T }> | undefined;
 
 export const createUseHook = <K extends keyof ClerkContext>(name: K): (() => ClerkContext[K]) => {
@@ -40,7 +41,7 @@ export const createUseHook = <K extends keyof ClerkContext>(name: K): (() => Cle
       throw new Error(`${name} must be used within a ClerkProvider`);
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return () => ctx[name]() as any;
+    return () => ctx()[name]() as any;
   };
 };
 
