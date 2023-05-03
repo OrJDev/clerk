@@ -8,6 +8,7 @@ import { SingleClerkContext } from '../shared';
 import type { IsomorphicClerkOptions } from '../types';
 import { __internal__setErrorThrowerOptions, errorThrower } from '../utils';
 import { deriveState } from '../utils/deriveState';
+import { StructureContext, StructureContextStates } from './StructureContext';
 
 __internal__setErrorThrowerOptions({
   packageName: '@clerk/clerk-solid',
@@ -69,10 +70,9 @@ const ClerkProvider: ParentComponent<ClerkProviderProps> = props => {
   createEffect(() => console.log(`clerkValue`, clerkValue()));
 
   return (
-    <SingleClerkContext.Provider
-      value={clerkValue}
-      children={props.children}
-    />
+    <StructureContext.Provider value={StructureContextStates.noGuarantees}>
+      <SingleClerkContext.Provider value={clerkValue}>{props.children}</SingleClerkContext.Provider>
+    </StructureContext.Provider>
   );
 };
 

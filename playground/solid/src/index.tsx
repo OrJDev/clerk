@@ -1,5 +1,5 @@
 /* @refresh reload */
-import { render } from 'solid-js/web';
+import { ErrorBoundary, render } from 'solid-js/web';
 import './index.css';
 import App from './App';
 import { ClerkProvider } from '@clerk/clerk-solid';
@@ -14,9 +14,11 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 render(
   () => (
-    <ClerkProvider publishableKey={import.meta.env['VITE_CLERK_PUBLISHABLE_KEY']}>
-      <App />,
-    </ClerkProvider>
+    <ErrorBoundary fallback={e => <div class='text-3xl font-bold text-red-500'>error: {e.message}</div>}>
+      <ClerkProvider publishableKey={import.meta.env['VITE_CLERK_PUBLISHABLE_KEY']}>
+        <App />
+      </ClerkProvider>
+    </ErrorBoundary>
   ),
   root!,
 );

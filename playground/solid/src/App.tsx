@@ -4,6 +4,7 @@ import styles from './App.module.css';
 
 let count = 0;
 const App: Component = () => {
+  console.log('called');
   const session = useContext(SingleClerkContext);
   createEffect(() => {
     const cnt = count++ + 1;
